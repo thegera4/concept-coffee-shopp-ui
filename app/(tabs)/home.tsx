@@ -1,6 +1,7 @@
 //import { Image } from 'expo-image'
+import { useRouter } from 'expo-router'
 import React, { useEffect, useRef, useState } from 'react'
-import { Dimensions, FlatList, Image, NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, FlatList, Image, NativeScrollEvent, NativeSyntheticEvent, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 const { width } = Dimensions.get('window')
 
@@ -8,20 +9,35 @@ const featuredData = [
   {
     id: '1',
     image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
-    title: 'New Summer Drinks',
+    title: 'Coffee Brewing Masterclass',
     subtitle: 'Cool off with our refreshing summer specials.',
+    article: {
+      title: 'Coffee Brewing Masterclass',
+      content: `Join us for an exclusive coffee brewing masterclass led by renowned barista, Alex Chen. Learn the art of crafting the perfect cup, from bean selection to brewing techniques. Limited spots available!\n\nDiscover the secrets behind a rich, aromatic brew. Alex will guide you through various brewing methods, including pour-over, French press, and espresso. Gain hands-on experience and elevate your coffee game.\n\nThis masterclass is perfect for coffee enthusiasts of all levels. Whether you're a beginner or a seasoned home barista, you'll learn valuable tips and tricks to enhance your coffee experience.\n\nDon't miss this opportunity to learn from the best. Reserve your spot today and embark on a journey to coffee perfection.`,
+      image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
+    },
   },
   {
     id: '2',
     image: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=80',
     title: 'Barista Workshop',
-    subtitle: 'Join our next event and learn latte art!'
+    subtitle: 'Join our next event and learn latte art!',
+    article: {
+      title: 'Barista Workshop',
+      content: `Unlock your inner barista with our hands-on workshop. Learn latte art, milk frothing, and more from industry experts. Perfect for coffee lovers looking to up their skills!`,
+      image: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=80',
+    },
   },
   {
     id: '3',
     image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80',
     title: 'Coffee Tips',
-    subtitle: 'Discover how to brew the perfect cup at home.'
+    subtitle: 'Discover how to brew the perfect cup at home.',
+    article: {
+      title: 'Coffee Tips',
+      content: `Discover expert tips for brewing the perfect cup at home. From grind size to water temperature, learn how to make every cup exceptional.`,
+      image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80',
+    },
   },
 ]
 
@@ -97,6 +113,7 @@ const menuData = [
 export default function HomeScreen() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const flatListRef = useRef<FlatList>(null)
+  const router = useRouter();
 
   // Auto-advance carousel
   useEffect(() => {
@@ -114,47 +131,51 @@ export default function HomeScreen() {
     setCurrentIndex(slide)
   }
 
-  return (
-    <ScrollView style={{ flex: 1, backgroundColor: '#fff' }}>
-      {/* Header */}
-      <View style={styles.headerContainer}>
-        <Text style={styles.headerText}>Welcome back</Text>
-        <Text style={styles.searchIcon}>🔍</Text>
-      </View>
+  const renderHeader = () => (
+    <View style={styles.headerContainer}>
+      <Text style={styles.headerText}>Welcome back</Text>
+      <Text style={styles.searchIcon}>🔍</Text>
+    </View>
+  )
 
-      {/* Featured Carousel */}
-      <View style={styles.featuredContainer}>
-        <FlatList
-          ref={flatListRef}
-          data={featuredData}
-          keyExtractor={item => item.id}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          onScroll={onScroll}
-          snapToAlignment="start"
-          decelerationRate={0.95}
-          scrollEnabled={false}
-          renderItem={({ item }) => (
-            <View style={{ width }}>
-              <Image source={{ uri: item.image }} style={styles.featuredImage} />
-              <Text style={styles.featuredTitle}>{item.title}</Text>
-              <Text style={styles.featuredSubtitle}>{item.subtitle}</Text>
-            </View>
-          )}
-        />
-        {/* Indicator Dots */}
-        <View style={styles.dotsContainer}>
-          {featuredData.map((_, idx) => (
-            <View
-              key={idx}
-              style={[styles.dot, currentIndex === idx && styles.activeDot]}
-            />
-          ))}
-        </View>
+  const renderFeaturedCarousel = () => (
+    <View style={styles.featuredContainer}>
+      <FlatList
+        ref={flatListRef}
+        data={featuredData}
+        keyExtractor={item => item.id}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onScroll={onScroll}
+        snapToAlignment="start"
+        decelerationRate={0.95}
+        scrollEnabled={false}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={{ width }}
+            activeOpacity={0.8}
+            onPress={() => router.push({ pathname: '/article', params: { article: JSON.stringify(item.article) } })}
+          >
+            <Image source={{ uri: item.image }} style={styles.featuredImage} />
+            <Text style={styles.featuredTitle}>{item.title}</Text>
+            <Text style={styles.featuredSubtitle}>{item.subtitle}</Text>
+          </TouchableOpacity>
+        )}
+      />
+      <View style={styles.dotsContainer}>
+        {featuredData.map((_, idx) => (
+          <View
+            key={idx}
+            style={[styles.dot, currentIndex === idx && styles.activeDot]}
+          />
+        ))}
       </View>
+    </View>
+  )
 
-      {/* Recommended Section */}
+  const renderRecommended = () => (
+    <View>
       <Text style={styles.sectionTitle}>Recommended</Text>
       <FlatList
         data={recommendedData}
@@ -170,8 +191,11 @@ export default function HomeScreen() {
           </View>
         )}
       />
+    </View>
+  )
 
-      {/* Best Selling Section */}
+  const renderBestSelling = () => (
+    <View>
       <Text style={styles.sectionTitle}>Best Selling</Text>
       <FlatList
         data={bestSellingData}
@@ -187,8 +211,11 @@ export default function HomeScreen() {
           </View>
         )}
       />
+    </View>
+  )
 
-      {/* Menu Section */}
+  const renderMenu = () => (
+    <View>
       <Text style={styles.sectionTitle}>Menu</Text>
       <FlatList
         data={menuData}
@@ -205,7 +232,25 @@ export default function HomeScreen() {
           </View>
         )}
       />
-    </ScrollView>
+    </View>
+  )
+
+  const sections = [
+    { id: 'header', render: renderHeader },
+    { id: 'featured', render: renderFeaturedCarousel },
+    { id: 'recommended', render: renderRecommended },
+    { id: 'bestSelling', render: renderBestSelling },
+    { id: 'menu', render: renderMenu },
+  ]
+
+  return (
+    <FlatList
+      data={sections}
+      keyExtractor={item => item.id}
+      renderItem={({ item }) => item.render()}
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ backgroundColor: '#fff' }}
+    />
   )
 }
 

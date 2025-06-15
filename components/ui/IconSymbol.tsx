@@ -18,7 +18,8 @@ const MAPPING = {
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
   'receipt': 'receipt',
-  'settings': 'settings'
+  'settings': 'settings',
+  'back.arrow': 'chevron-left'
 } as IconMapping
 
 /**
