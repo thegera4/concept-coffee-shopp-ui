@@ -164,12 +164,7 @@ export default function HomeScreen() {
         )}
       />
       <View style={styles.dotsContainer}>
-        {featuredData.map((_, idx) => (
-          <View
-            key={idx}
-            style={[styles.dot, currentIndex === idx && styles.activeDot]}
-          />
-        ))}
+        { featuredData.map((_, idx) => (<View key={idx} style={[styles.dot, currentIndex === idx && styles.activeDot]}/>)) }
       </View>
     </View>
   )
@@ -249,7 +244,7 @@ export default function HomeScreen() {
       keyExtractor={item => item.id}
       renderItem={({ item }) => item.render()}
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ backgroundColor: '#fff' }}
+      contentContainerStyle={{ backgroundColor: '#FDF8F2' }}
     />
   )
 }
@@ -261,8 +256,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingTop: 32,
-    paddingBottom: 8,
-    backgroundColor: '#fff',
+    paddingBottom: 8
   },
   headerText: {
     fontSize: 20,
@@ -275,7 +269,7 @@ const styles = StyleSheet.create({
   },
   featuredContainer: {
     paddingHorizontal: 0,
-    marginBottom: 16,
+    marginBottom: 16
   },
   featuredImage: {
     width: width - 32,
@@ -324,7 +318,6 @@ const styles = StyleSheet.create({
   card: {
     width: 160,
     marginRight: 16,
-    backgroundColor: '#faf8f6',
     borderRadius: 16,
     padding: 12,
     alignItems: 'center',

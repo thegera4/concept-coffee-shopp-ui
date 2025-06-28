@@ -1,5 +1,6 @@
 import React from 'react'
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { useAuth } from '../../context/AuthContext'
 
 const profileImage = 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sophia'
 
@@ -8,10 +9,33 @@ const settingsOptions = [
   { label: 'Payment Methods', icon: '💳' },
   { label: 'Contact Us', icon: '📞' },
   { label: 'Locate Nearest Store', icon: '📍' },
-  { label: 'Delete Account', icon: '🗑️' },
+  { label: 'Logout', icon: '🚪' },
 ]
 
 export default function SettingsScreen() {
+  const { logout } = useAuth()
+
+  const handleOptionPress = (option: string) => {
+    if (option === 'Logout') {
+      Alert.alert('Exit', 'Are you sure you want to logout?',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Logout', 
+            style: 'destructive',
+            onPress: async () => {
+              try {
+                await logout()
+              } catch (error) {
+                console.error('Logout failed:', error)
+                Alert.alert('Error', 'Failed to logout. Please try again.')
+              }
+            }
+          }
+        ]
+      )
+    }
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Your Settings</Text>
@@ -19,7 +43,12 @@ export default function SettingsScreen() {
       <Text style={styles.name}>Sophia Carter</Text>
       <View style={styles.optionsContainer}>
         {settingsOptions.map((option, idx) => (
-          <TouchableOpacity key={option.label} style={styles.optionRow} activeOpacity={0.7}>
+          <TouchableOpacity 
+            key={option.label} 
+            style={styles.optionRow} 
+            activeOpacity={0.7}
+            onPress={() => handleOptionPress(option.label)}
+          >
             <Text style={styles.optionLabel}>{option.label}</Text>
             <Text style={styles.optionIcon}>{option.icon}</Text>
           </TouchableOpacity>

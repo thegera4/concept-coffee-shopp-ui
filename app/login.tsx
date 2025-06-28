@@ -1,50 +1,67 @@
 import { useState } from 'react'
-import { Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Image, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import CustomAlert from '../components/CustomAlert'
 import { useAuth } from '../context/AuthContext'
 
 export default function LoginScreen() {
-  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [alertVisible, setAlertVisible] = useState(false)
+  const [alertMessage, setAlertMessage] = useState('')
   const { login } = useAuth()
 
   const handleLogin = async () => {
-    const loginResponse = await login(username, password)
-    // add alerts
-    console.log("login response: ", loginResponse)
+    try{
+      await login(email, password)
+    } catch (error) {
+      setAlertMessage(error instanceof Error ? error.message : 'Error')
+      setAlertVisible(true)
+    }
   }
 
   return (
-    <View style={styles.container}>
-      <Image source={require('../assets/images/icon.png')} style={styles.logo} />
-      <Text style={styles.title}>COFFEE SHOP</Text>
-      <Text style={styles.subtitle}>Concept Mobile App</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        placeholderTextColor="#7D5A5A"
-        value={username}
-        onChangeText={setUsername}
-        autoCapitalize="none"
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <Image source={require('../assets/images/icon.png')} style={styles.logo} />
+        <Text style={styles.title}>COFFEE SHOP</Text>
+        <Text style={styles.subtitle}>Concept Mobile App</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Username"
+          placeholderTextColor="#7D5A5A"
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          placeholderTextColor="#7D5A5A"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+        <TouchableOpacity
+          style={[styles.loginButton, (!email || !password) && styles.disabledButton]}
+          onPress={handleLogin}
+          disabled={!email || !password}
+        >
+          <Text style={styles.loginButtonText}>Login</Text>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Text style={styles.signupText}>Do not have an account? Sign up</Text>
+        </TouchableOpacity>
+      </View>
+    
+      <CustomAlert
+        visible={alertVisible}
+        title="Login Error"
+        message={alertMessage}
+        type="error"
+        confirmText="OK"
+        onConfirm={() => setAlertVisible(false)}
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        placeholderTextColor="#7D5A5A"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <TouchableOpacity
-        style={[styles.loginButton, (!username || !password) && styles.disabledButton]}
-        onPress={handleLogin}
-        disabled={!username || !password}
-      >
-        <Text style={styles.loginButtonText}>Login</Text>
-      </TouchableOpacity>
-      <TouchableOpacity>
-        <Text style={styles.signupText}>Do not have an account? Sign up</Text>
-      </TouchableOpacity>
-    </View>
+    </KeyboardAvoidingView>
   )
 }
 

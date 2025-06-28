@@ -15,3 +15,14 @@ export interface AuthContextType {
 export interface AuthProviderProps {
   children: ReactNode
 }
+
+export interface CustomAlertProps {
+  visible: boolean
+  title: string
+  message: string
+  onConfirm: () => void
+  onCancel?: () => void
+  confirmText: string
+  cancelText?: string
+  type: 'success' | 'error' | 'warning' | 'info'
+}

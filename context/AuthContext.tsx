@@ -45,31 +45,51 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   /**
    * Login function to authenticate the user
-   * @param username - The username of the user
+   * @param email - The email of the user
    * @param password - The password of the user
    */
-  const login = async (username: string, password: string) => {
+  const login = async (email: string, password: string): Promise<void> => {
     try {
-      //const response = await fetch(`${BACKEND_BASE_URL}v1/users/login`, {
-      const response = await fetch(`https://concept-coffee-shop-production.up.railway.app/api/v1/users/login`, {
+      const loginUrl = `${BACKEND_BASE_URL}api/v1/users/login`     
+      const requestBody = JSON.stringify({ email, password })
+      
+      const response = await fetch(loginUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
+        headers: {'Content-Type': 'application/json'},
+        body: requestBody,
       })
-
-      console.log("Login Response: ", response)
+      const responseText = await response.text()
 
       if (!response.ok) {
-        throw new Error('Login failed. Please check your credentials.')
+        let errorMessage = 'Login failed. Please check your credentials.'
+        try {
+          if (responseText) {
+            const errorData = JSON.parse(responseText)
+            errorMessage = errorData.message || errorData.error || errorMessage
+          }
+        } catch (parseError) {
+          throw new Error('Could not parse error response as JSON: ' + parseError)
+        }
+        throw new Error(errorMessage)
       }
       
-      const { data } = await response.json()
+      let responseData
+      try {
+        responseData = JSON.parse(responseText)
+      } catch (parseError) {
+        throw new Error('Could not parse response from server as JSON: ' + parseError)
+      }
+      
+      const { data } = responseData
+      if (!data.token) { 
+        throw new Error('No token received from the server.')
+      } 
+      
       await SecureStore.setItemAsync(TOKEN_KEY, data.token)
       setAuthState({ token: data.token, authenticated: true, isLoading: false })
     } catch (e) {
       console.error("Error while logging in: ", e)
+      throw e // Re-throw the error so it can be caught by the calling function
     }
   }
 
