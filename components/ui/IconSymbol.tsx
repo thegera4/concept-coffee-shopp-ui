@@ -19,7 +19,12 @@ const MAPPING = {
   'chevron.right': 'chevron-right',
   'receipt': 'receipt',
   'settings': 'settings',
-  'back.arrow': 'chevron-left'
+  'back.arrow': 'chevron-left',
+  'search': 'search',
+  'credit-card': 'credit-card',
+  'phone': 'phone',
+  'location-on': 'location-on',
+  'logout': 'logout'
 } as IconMapping
 
 /**

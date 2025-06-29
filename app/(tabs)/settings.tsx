@@ -1,38 +1,30 @@
-import React from 'react'
-import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import CustomAlert from '@/components/CustomAlert'
+import { IconSymbol } from '@/components/ui/IconSymbol'
+import React, { useState } from 'react'
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useAuth } from '../../context/AuthContext'
 
 const profileImage = 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sophia'
 
 const settingsOptions = [
-  { label: 'App Settings', icon: '⚙️' },
-  { label: 'Payment Methods', icon: '💳' },
-  { label: 'Contact Us', icon: '📞' },
-  { label: 'Locate Nearest Store', icon: '📍' },
-  { label: 'Logout', icon: '🚪' },
+  { label: 'App Settings', icon: 'settings' },
+  { label: 'Payment Methods', icon: 'credit-card' },
+  { label: 'Contact Us', icon: 'phone' },
+  { label: 'Locate Nearest Store', icon: 'location-on' },
+  { label: 'Logout', icon: 'logout' },
 ]
 
 export default function SettingsScreen() {
   const { logout } = useAuth()
+  const [alertVisible, setAlertVisible] = useState(false)
+  const [alertMessage, setAlertMessage] = useState('')
 
   const handleOptionPress = (option: string) => {
     if (option === 'Logout') {
-      Alert.alert('Exit', 'Are you sure you want to logout?',
-        [
-          { text: 'Cancel', style: 'cancel' },
-          { text: 'Logout', 
-            style: 'destructive',
-            onPress: async () => {
-              try {
-                await logout()
-              } catch (error) {
-                console.error('Logout failed:', error)
-                Alert.alert('Error', 'Failed to logout. Please try again.')
-              }
-            }
-          }
-        ]
-      )
+      setAlertMessage('Are you sure you want to logout?')
+      setAlertVisible(true)
+    } else {
+      console.log(`Option clicked: ${option}`)
     }
   }
 
@@ -50,10 +42,20 @@ export default function SettingsScreen() {
             onPress={() => handleOptionPress(option.label)}
           >
             <Text style={styles.optionLabel}>{option.label}</Text>
-            <Text style={styles.optionIcon}>{option.icon}</Text>
+            <IconSymbol name={option.icon as any} size={22} color="#222" />
           </TouchableOpacity>
         ))}
       </View>
+      <CustomAlert 
+        visible={alertVisible}
+        title='Logout'
+        message={alertMessage}
+        onConfirm={logout}
+        onCancel={() => setAlertVisible(false)}
+        confirmText = 'YES'
+        cancelText = 'NO'
+        type = 'warning'
+      />
     </View>
   )
 }
@@ -61,7 +63,7 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#FDF8F2',
     alignItems: 'center',
     paddingTop: 32,
   },
@@ -99,10 +101,6 @@ const styles = StyleSheet.create({
   },
   optionLabel: {
     fontSize: 16,
-    color: '#222',
-  },
-  optionIcon: {
-    fontSize: 22,
     color: '#222',
   },
 })

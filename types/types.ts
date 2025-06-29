@@ -20,7 +20,7 @@ export interface CustomAlertProps {
   visible: boolean
   title: string
   message: string
-  onConfirm: () => void
+  onConfirm: (option: string) => void
   onCancel?: () => void
   confirmText: string
   cancelText?: string

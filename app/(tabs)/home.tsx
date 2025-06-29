@@ -1,4 +1,5 @@
 //import { Image } from 'expo-image'
+import { IconSymbol } from '@/components/ui/IconSymbol'
 import { useRouter } from 'expo-router'
 import React, { useEffect, useRef, useState } from 'react'
 import { Dimensions, FlatList, Image, NativeScrollEvent, NativeSyntheticEvent, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -134,7 +135,7 @@ export default function HomeScreen() {
   const renderHeader = () => (
     <View style={styles.headerContainer}>
       <Text style={styles.headerText}>Welcome back</Text>
-      <Text style={styles.searchIcon}>🔍</Text>
+      <IconSymbol name="search" size={32} color="#222"/>
     </View>
   )
 
@@ -155,7 +156,13 @@ export default function HomeScreen() {
           <TouchableOpacity
             style={{ width }}
             activeOpacity={0.8}
-            onPress={() => router.push({ pathname: '/article', params: { article: JSON.stringify(item.article) } })}
+            onPress={() => {
+              console.log('Carousel item pressed:', item.title)
+              router.push({
+                pathname: '/article',
+                params: { article: JSON.stringify(item.article) }
+              })
+            }}
           >
             <Image source={{ uri: item.image }} style={styles.featuredImage} />
             <Text style={styles.featuredTitle}>{item.title}</Text>
@@ -261,10 +268,6 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#222',
-  },
-  searchIcon: {
-    fontSize: 22,
     color: '#222',
   },
   featuredContainer: {

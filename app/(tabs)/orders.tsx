@@ -1,4 +1,5 @@
 //import { Image } from 'expo-image'
+import { IconSymbol } from '@/components/ui/IconSymbol'
 import React from 'react'
 import { FlatList, Image, StyleSheet, Text, View } from 'react-native'
 
@@ -91,7 +92,7 @@ export default function OrdersScreen() {
       {/* Header */}
       <View style={styles.headerContainer}>
         <Text style={styles.headerText}>Order History</Text>
-        <Text style={styles.searchIcon}>🔍</Text>
+        <IconSymbol name="search" size={32} color="#222" />
       </View>
       <FlatList
         data={ordersData}
@@ -117,7 +118,7 @@ export default function OrdersScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#FDF8F2',
     paddingTop: 32,
   },
   headerContainer: {
@@ -132,14 +133,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#222',
   },
-  searchIcon: {
-    fontSize: 22,
-    color: '#222',
-  },
   orderRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderBottomWidth: 1,
@@ -149,8 +145,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 12,
-    marginRight: 12,
-    backgroundColor: '#eee',
+    marginRight: 12,   backgroundColor: '#eee',
   },
   orderInfo: {
     flex: 1,
